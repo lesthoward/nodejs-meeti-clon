@@ -1,0 +1,34 @@
+
+<main class="contenedor contenedor-formularios">
+    <h1><%- title %></h1>
+
+    <form action="/register" method="POST" class="default-form">
+        <div class="campo">
+            <label>Correo</label>
+            <input type="text" name="email" placeholder="correo@correo.com" <%= user.email ? `value=${user.email}`: null %> >
+        </div>
+        <!-- campo -->
+        <div class="campo">
+            <label>Nombre</label>
+            <input type="text" name="name" placeholder="Tu nombre"
+            <%= user.name ? `value=${user.name}`: null %> >
+            
+        </div>
+        <!-- campo -->
+        <div class="campo">
+            <label>Contraseña</label>
+            <input type="password" name="password" placeholder="Contraseña confidencial">
+        </div>
+        <!-- campo -->
+        <div class="campo">
+            <label>Repetir contraseña</label>
+            <input type="password" name="password-confirmation" placeholder="Repetir la contraseña">
+        </div>
+        <!-- campo -->
+        <div class="campo enviar">
+            <input type="submit" class="btn btn-rosa" value="Crear cuenta">
+        </div>
+        <!-- campo -->
+    </form>
+    <!-- default-form -->
+</main>

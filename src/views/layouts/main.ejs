@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Normalize -->
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css'/>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Staatliches:regular" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic" rel="stylesheet" />
+    <!-- Styles CSS -->
+    <link rel="stylesheet" href="/css/app.css">
+    <!-- Information -->
+    <title><%- title %></title>
+</head>
+<body>
+    <header class="site-header contenedor">
+        <a href="/">
+            <img src="/images/variety/logo.png">
+        </a>
+
+        <nav class="nav">
+            <a href="#">Crear grupo</a>
+            <a href="/login">Iniciar sesión</a>
+            <a href="/register">Registrarse</a>
+       </nav>
+       <!-- nav -->
+    </header>
+    <!-- site-header -->
+
+    <!-- ! Error messages -->
+    <% if(locals.messages) { %> 
+        <% let messageCategory = Object.keys(locals.messages)[0] %>  
+        <% if (messageCategory) { %>
+            <% locals.messages[messageCategory].forEach(message => { %>
+                <div class="alertas">
+                    <% messageCategory === 'errors' ? messageCategory = 'error' : messageCategory %> 
+                    <p class="alerta <%- messageCategory %> "><%- message %> </p>
+                </div>
+            <% }) %>
+        <% } %>
+    <% } %> 
+
+    <!-- Here goes the main content of the "renders" -->
+    <%- body %> 
+
+    <footer class="site-footer contenedor">
+        <nav class="nav">
+            <a href="#">Crear grupo</a>
+            <a href="#">Iniciar sesión</a>
+            <a href="/register">Registrarse</a>
+       </nav>
+
+       <p class="copyright">© Todos los derechos reservados <%- year %> </p>
+    </footer>
+
+</body>
+</html>
