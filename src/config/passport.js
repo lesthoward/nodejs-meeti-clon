@@ -18,7 +18,6 @@ passport.use(new LocalStrategy(
         if(user.isValid === '1') {
             done(null, user)
         } else {
-            console.log(user);
             done(null, false, {message: 'Primero tienes que confirmar el correo'})
         }
     }

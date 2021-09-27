@@ -11,11 +11,14 @@ const dbConnection = require('./src/config/db-connection')
 const session = require('express-session')
 const flash = require('connect-flash')
 const passport = require('./src/config/passport')
+const authController = require('./src/controllers/auth.controller')
 
 
 // Database connection
 try {
     require('./src/models/User')
+    require('./src/models/Category')
+    require('./src/models/Group')
     dbConnection.sync({alter: true})
     .then(() => {
         console.log('Postgres connection has been established successfully');
@@ -58,7 +61,6 @@ app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
 
-
 // Personal middlewares
 app.use((req, res, next) => {
     res.locals.messages = req.flash()
@@ -70,6 +72,7 @@ app.use((req, res, next) => {
 app.use('/', require('./src/routes/index.routes'))
 app.use('/', require('./src/routes/auth.routes'))
 app.use('/', require('./src/routes/management.routes'))
+app.use('/', require('./src/routes/group.routes'))
 
 
 

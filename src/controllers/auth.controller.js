@@ -5,6 +5,9 @@ const { check, validationResult } = require('express-validator');
 const sendMessage = require('../handlers/send-emails');
 const { nanoid } = require('nanoid');
 const passport = require('passport');
+const createError = require('http-errors')
+const url = require('url')
+
 
 const showRegister = (req = request, res = response) => {
 	res.render('register', {
@@ -98,35 +101,50 @@ const accountConfirmation = async (req = request, res = response) => {
 };
 
 const goAuthenticate = passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    badRequestMessage: 'Introduce tus datos en los correspondientes',
-    failureFlash: true,
-})
+	successRedirect: '/management',
+	failureRedirect: '/login',
+	badRequestMessage: 'Introduce tus datos en los correspondientes',
+	failureFlash: true,
+});
 
 
-const preserveLogin = {
-    isFailure: passport.authenticate('local', {
-        failureRedirect: '/login',
-        badRequestMessage: 'Introduce tus datos en los correspondientes',
-        failureFlash: true,
-    }),
-    isOK: (req=request, res=response) => {
-        const getURL = '/' + req.headers.referer.match(/[a-z]+$/gm)[0]
-        const fullURL = getURL === '/login' ? '/' : req.headers.origin + getURL
-        res.redirect(fullURL)
-    }
-}
 
+// Custom passport to perverse the URLs after logged
+const preserveTheLogin = (req = request, res = response, next) => {
+	passport.authenticate('local', (err, user, flash) => {
+		if (err) return next(createError(500, 'Authentication is not works'))
+
+		if (!user) {
+            // Format text when is equals to text below, it is to set my custom message
+			flash.message.toLowerCase() === 'missing credentials'
+				? (flash.message =
+						'Introduce tus datos en campos los correspondientes')
+				: flash.message;
+			req.flash('errors', flash.message);
+
+            // It is to know where the request is coming
+			return res.redirect(req.headers.referer);
+		} 
+
+        req.logIn(user, function (err) {
+            // Error "Bad Gateway", if some errors occurs when login 
+            if(err) return next(createError(502, 'Unable to authenticate'))
+
+			const getURL = url.parse(req.headers.referer).path
+			const fullURL = getURL === '/login' ? '/management' : url.parse(req.headers.referer).search.replace('?', '/')
+			const redirectURL = req.headers.origin + fullURL
+            res.redirect(redirectURL);
+        })
+
+	})(req, res, next);
+};
 
 const isAuthenticate = (req = request, res = response, next) => {
-	// console.log(req.headers);
-	console.log();
 	if (req.isAuthenticated()) {
 		return next();
 	}
-	const redirectURL = req.originalUrl.replace('/', '?originalURL=');
 
+    const redirectURL =  req.url.replace('/','?')
 	return res.redirect(`/login${redirectURL}`);
 };
 
@@ -137,5 +155,5 @@ module.exports = {
 	accountConfirmation,
 	goAuthenticate,
 	isAuthenticate,
-    preserveLogin
+	preserveTheLogin,
 };

@@ -4,10 +4,7 @@ const managementController = require('../controllers/management.controller')
 const { isAuthenticate, preserveLogin, goAuthenticate } = require('../controllers/auth.controller')
 
 
-router.get('/management', 
-    // preserveLogin.isFailure,
-    // goAuthenticate,
-    // preserveLogin.isOK,
+router.get('/management',
     isAuthenticate,
     managementController.showPanel
 )
