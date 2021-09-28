@@ -3,15 +3,16 @@ const db = require('../config/db-connection')
 const { v4: uuid } = require('uuid')
 const Category = require('./Category')
 const User = require('./User')
+const { nanoid } = require('nanoid')
+
 
 const Group = db.define('group', {
 
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
-        // allowNull: false,
-        // defaultValue: uuid()
+        // autoIncrement: true,
+        allowNull: false,
     },
     name: {
         type: DataTypes.TEXT,

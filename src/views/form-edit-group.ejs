@@ -1,15 +1,15 @@
 <main class="contenedor contenedor-formulario no-padding">
-    <h1> <% title %>  </h1>
-    <form action="/group/new" method="POST" class="default-form" enctype="multipart/form-data">
+    <h1> Editar grupo: <%= group.name %>  </h1>
+    <form method="POST" class="default-form">
         <div class="campo">
             <label >Nombre</label>
-            <input type="text" name="name" placeholder="Comunidad de freelancer">
+            <input type="text" name="name" placeholder="Comunidad de freelancer" value="<%= group.name %>">
         </div>
         <!-- campo -->
         <div class="campo descripcion">
             <label >Descripción</label>
             <div class="contenedor-editor">
-                <input type="hidden" id="x" name="description">
+                <input type="hidden" id="x" name="description" value="<%= group.description %>">
                 <trix-editor input="x"></trix-editor>
             </div>
         </div>
@@ -19,25 +19,19 @@
             <select class="categoria" name="category">
                 <option  readonly=true value="none">-- Elige una categoría --</option>
                 <% categories.forEach(category => { %>
-                    <option value="<%= category.id %> "><%= category.name %> </option>
+                    <option value="<%= category.id %>" <%= group.categoryId == category.id ? 'selected' : null %>   ><%= category.name %> </option>
                 <% }) %>
             </select>
         </div>
         <!-- campo -->
 
-        <!-- .campo -->
-        <div class="campo">
-            <label >Imagen</label>
-            <input type="file" name="image">
-        </div>
-        <!-- campo -->
 
         <div class="campo">
             <label >Sitio Web (opcional)</label>
-            <input type="text" name="url" placeholder="https://lesthoward.com">
+            <input type="text" name="url" placeholder="https://lesthoward.com" value="<%= group.url %>">
         </div>
         <!-- campo -->
 
-        <input type="submit" value="Crear grupo" class="btn btn-rosa">
+        <input type="submit" value="Guardar cambios" class="btn btn-rosa">
     </form>
 </main>

@@ -11,7 +11,7 @@ const dbConnection = require('./src/config/db-connection')
 const session = require('express-session')
 const flash = require('connect-flash')
 const passport = require('./src/config/passport')
-const authController = require('./src/controllers/auth.controller')
+const { request, response } = require('express')
 
 
 // Database connection
@@ -30,7 +30,7 @@ try {
 
 // Live reload
 const liveReloadServer = livereload.createServer()
-liveReloadServer.watch(path.join(__dirname, 'public'))
+liveReloadServer.watch(path.join(__dirname, './public/'))
 liveReloadServer.server.once('connection', () => {
     setTimeout(function() {
         liveReloadServer.refresh('/')
@@ -48,13 +48,17 @@ app.set('views', path.join(__dirname, './src/views'))
 app.set('layout', 'layouts/main')
 
 // Middlewares
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 app.use(session({
     secret: process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 60_000
+        // expires: new Date(new Date().now + 10_000)
+    }
 }))
 app.use(flash())
 // Passport
@@ -64,11 +68,17 @@ app.use(passport.session())
 // Personal middlewares
 app.use((req, res, next) => {
     res.locals.messages = req.flash()
-    res.locals.year = new Date().getFullYear()
+    res.locals.year = new Date()
     next() 
 })
 
 // Routes
+app.use('/',(req=request, res=response, next) => {
+    const lang = req.acceptsLanguages('bg', 'en')
+    console.log(req.lang);
+    req.lang = 'es'
+    next()
+})
 app.use('/', require('./src/routes/index.routes'))
 app.use('/', require('./src/routes/auth.routes'))
 app.use('/', require('./src/routes/management.routes'))

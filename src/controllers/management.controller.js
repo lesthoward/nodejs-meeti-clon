@@ -1,10 +1,17 @@
 const { request, response } = require('express')
+const Group = require('../models/Group')
 
+const showPanel  = async (req=request, res=response) => {
+    const groups = await Group.findAll({
+        where: { userId: req.user.id },
+        order: [
+            ['createdAt', 'ASC']
+        ]
+    })
 
-const showPanel  = (req=request, res=response) => {
-    
     res.render('management-panel', {
-        title: 'Panel de administración'
+        title: 'Panel de administración',
+        groups
     })
 }
 

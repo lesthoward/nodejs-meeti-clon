@@ -34,7 +34,6 @@ const sendMessage = async (subject, to, emailURL, filename) => {
         text: 'Este es un correo de confirmación, si no ves el mensaje intente cambiando tu servicio de correo para visualizar o contacte con soporte',
         html: htmlTemplate
     })
-    console.log('file: send-emails.js ~ line 37 ~ sendMessage ~ message', message)
 }
 
 

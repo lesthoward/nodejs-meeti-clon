@@ -17,6 +17,9 @@ const showRegister = (req = request, res = response) => {
 };
 
 const addUser = async (req = request, res = response) => {
+	// Automatically login 
+	// let newUser;
+
 	// Confidential URL for email confirmation
 	const isValidURL = req.body.email + nanoid(10);
 	const user = {
@@ -34,7 +37,7 @@ const addUser = async (req = request, res = response) => {
 
 	// Try create an account in the database
 	try {
-		await User.create(user);
+		const newUser = await User.create(user);
 	} catch (error) {
 		// console.log(error);
 		// Catch errors
@@ -64,6 +67,17 @@ const addUser = async (req = request, res = response) => {
 			'Te hemos enviado un correo de confirmación, si no lo encuentras busca en tu bandeja de SPAM'
 		);
 		return res.redirect('/login');
+		// Automatically login
+		// req.login(newUser, function(err) {
+		// 	if(err) {
+		// 		console.log(user);
+		// 		res.send('No se pudo iniciar sesión');
+		// 	} else {
+		// 		req.flash('errors', 'Listo tu sesión')
+		// 		return res.redirect('/')
+		// 	}
+		// })
+
 	} catch (error) {
 		console.log(error);
 		req.flash(
@@ -97,7 +111,8 @@ const accountConfirmation = async (req = request, res = response) => {
 		'exito',
 		'Bienvenido a nuestra comunidad, gracias por utilizar nuestra plataforma'
 	);
-	res.redirect('/login');
+	req.logIn()
+	// res.redirect('/login');
 };
 
 const goAuthenticate = passport.authenticate('local', {
@@ -125,7 +140,6 @@ const preserveTheLogin = (req = request, res = response, next) => {
             // It is to know where the request is coming
 			return res.redirect(req.headers.referer);
 		} 
-
         req.logIn(user, function (err) {
             // Error "Bad Gateway", if some errors occurs when login 
             if(err) return next(createError(502, 'Unable to authenticate'))

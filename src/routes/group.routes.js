@@ -10,7 +10,28 @@ router.get('/group/new',
 
 router.post('/group/new',
     isAuthenticate,
-    groupController.createGroup
+    groupController.uploadImage,
+    groupController.createGroup,
+)
+
+router.get('/group/edit/:groupID', 
+    isAuthenticate,
+    groupController.showEdit
+)
+
+router.post('/group/edit/:groupID', 
+    isAuthenticate,
+    groupController.editGroup
+)
+
+router.get('/group/edit-image/:groupID',
+    isAuthenticate,
+    groupController.showEditImage
+)
+router.post('/group/edit-image/:groupID',
+    isAuthenticate,
+    groupController.uploadImage,
+    groupController.editImage
 )
 
 module.exports = router
