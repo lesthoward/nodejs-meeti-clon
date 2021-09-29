@@ -111,8 +111,8 @@ const accountConfirmation = async (req = request, res = response) => {
 		'exito',
 		'Bienvenido a nuestra comunidad, gracias por utilizar nuestra plataforma'
 	);
-	req.logIn()
-	// res.redirect('/login');
+	// req.logIn()
+	res.redirect('/login');
 };
 
 const goAuthenticate = passport.authenticate('local', {

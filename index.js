@@ -56,7 +56,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 60_000
+        // maxAge: 60_000
         // expires: new Date(new Date().now + 10_000)
     }
 }))
@@ -64,6 +64,23 @@ app.use(flash())
 // Passport
 app.use(passport.initialize())
 app.use(passport.session())
+
+// Lang
+const { I18n, setLocale } = require('i18n')
+const i18n = new I18n()
+
+i18n.configure ({
+    directory: path.join(__dirname, './src/locals'),
+    locales: ['en', 'es'],
+    header: ['accept-language']
+})
+
+app.use((req, res, next) => {
+    i18n.init(req, res)
+    if(req.session.locale) res.setLocale(req.session.locale)
+    next()
+})
+
 
 // Personal middlewares
 app.use((req, res, next) => {
@@ -73,12 +90,6 @@ app.use((req, res, next) => {
 })
 
 // Routes
-app.use('/',(req=request, res=response, next) => {
-    const lang = req.acceptsLanguages('bg', 'en')
-    console.log(req.lang);
-    req.lang = 'es'
-    next()
-})
 app.use('/', require('./src/routes/index.routes'))
 app.use('/', require('./src/routes/auth.routes'))
 app.use('/', require('./src/routes/management.routes'))
