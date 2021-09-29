@@ -1,6 +1,7 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const User = require('../models/User')
+const RememberMeStrategy = require('passport-remember-me-extended').Strategy
 
 passport.use(new LocalStrategy(
     {
@@ -17,6 +18,7 @@ passport.use(new LocalStrategy(
         
         if(user.isValid === '1') {
             done(null, user)
+
         } else {
             done(null, false, {message: 'Primero tienes que confirmar el correo'})
         }

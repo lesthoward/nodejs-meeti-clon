@@ -55,16 +55,15 @@ app.use(session({
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        // maxAge: 60_000
-        // expires: new Date(new Date().now + 10_000)
-    }
+    cookie: { 
+        // expires: new Date(Date.now() + 60 * 10000), 
+        // maxAge: 60*10000
+      }
 }))
 app.use(flash())
 // Passport
 app.use(passport.initialize())
 app.use(passport.session())
-
 // Lang
 const { I18n, setLocale } = require('i18n')
 const i18n = new I18n()
@@ -77,6 +76,7 @@ i18n.configure ({
 
 app.use((req, res, next) => {
     i18n.init(req, res)
+    console.log(req.session);
     if(req.session.locale) res.setLocale(req.session.locale)
     next()
 })

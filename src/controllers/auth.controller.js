@@ -140,6 +140,7 @@ const preserveTheLogin = (req = request, res = response, next) => {
             // It is to know where the request is coming
 			return res.redirect(req.headers.referer);
 		} 
+
         req.logIn(user, function (err) {
             // Error "Bad Gateway", if some errors occurs when login 
             if(err) return next(createError(502, 'Unable to authenticate'))
@@ -147,10 +148,15 @@ const preserveTheLogin = (req = request, res = response, next) => {
 			const getURL = url.parse(req.headers.referer).path
 			const fullURL = getURL === '/login' ? '/management' : url.parse(req.headers.referer).search.replace('?', '/')
 			const redirectURL = req.headers.origin + fullURL
+
+			// No session expires
+			req.session.cookie.expires = new Date(Date.now() + 60 * 10000)
+			
             res.redirect(redirectURL);
         })
 
 	})(req, res, next);
+
 };
 
 const isAuthenticate = (req = request, res = response, next) => {
