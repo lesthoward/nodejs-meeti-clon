@@ -34,4 +34,15 @@ router.post('/group/edit-image/:groupID',
     groupController.editImage
 )
 
+router.get('/group/delete/:groupID',
+    isAuthenticate,
+    groupController.showFormDelete
+)
+
+router.post('/group/delete/:groupID',
+    isAuthenticate,
+    groupController.deleteGroup
+)
+
+
 module.exports = router

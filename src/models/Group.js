@@ -9,7 +9,7 @@ const { nanoid } = require('nanoid')
 const Group = db.define('group', {
 
     id: {
-        type: DataTypes.UUIDV4,
+        type: DataTypes.STRING,
         primaryKey: true,
         // autoIncrement: true,
         allowNull: false,

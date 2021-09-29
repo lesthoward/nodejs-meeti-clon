@@ -32,6 +32,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (userID, done) => {
     const user = await User.findByPk(userID)
     done(null, user)
+    'successfully'
 })
 
 module.exports = passport

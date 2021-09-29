@@ -76,7 +76,6 @@ i18n.configure ({
 
 app.use((req, res, next) => {
     i18n.init(req, res)
-    console.log(req.session);
     if(req.session.locale) res.setLocale(req.session.locale)
     next()
 })
@@ -84,6 +83,18 @@ app.use((req, res, next) => {
 
 // Personal middlewares
 app.use((req, res, next) => {
+    const user = {
+        id: 29,
+        email: 'lesthoward@gmail.com',
+        password: '$2b$10$.iK5ZdqArydFeOhu157B4eDlZQ.tCy742RRfIrjH16j6pWn6t.P9C',
+
+    }
+    req.logIn(user, function(err) {
+        if(err) return res.send('Error Auth')
+
+        console.log('Ok, logged');
+    })
+
     res.locals.messages = req.flash()
     res.locals.year = new Date()
     next() 

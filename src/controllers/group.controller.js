@@ -170,18 +170,38 @@ const editImage = async (req = request, res = response) => {
 	const group = await Group.findByPk(req.params.groupID)
 	if(!group) return next(createError(402, 'Operación no autorizada (EDIT IMAGE)'))
 
-	const groups = await Group.findAll()
-
 	if(!req.file) {
 		req.flash('errors','Añade una imagen')
 		return res.redirect('back')
 	} else {
-		fs.unlinkSync(path.join(__dirname,`../../public/uploads/group/${group.image}`))
+		if(group.image) {
+			fs.unlinkSync(path.join(__dirname,`../../public/uploads/group/${group.image}`))
+		}
 		group.image = req.file.filename
 		group.save()
 		req.flash('exito', 'Imagen almacenada correctamente')
 		res.redirect('/management')
 	}
+}
+
+const showFormDelete = async (req=request, res=response, next) => {
+	const group = await Group.findOne({where: { id: req.params.groupID, userId: req.user.id }})
+	if(!group) return createError('401', 'Operación no valida (PERMISSIONS  || NOT FOUND)')
+    
+	
+	res.render('form-delete-group', {
+		title: 'Eliminar grupo',
+		group
+	})
+}
+
+const deleteGroup = async (req=request, res=response, next) => {
+	const group = await Group.findOne({where: { id: req.params.groupID, userId: req.user.id }})
+	if(!group) return createError('401', 'Operación no valida (PERMISSIONS  || NOT FOUND)')
+	// await Group.destroy({ where: {  }})
+	await group.destroy()
+	req.flash('exito', 'Grupo eliminado correctamente')
+	res.redirect('/management')
 }
 
 module.exports = {
@@ -191,5 +211,7 @@ module.exports = {
 	showEdit,
 	editGroup,
 	showEditImage,
-	editImage
+	editImage,
+	showFormDelete,
+	deleteGroup
 }
