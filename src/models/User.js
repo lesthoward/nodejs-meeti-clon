@@ -22,6 +22,7 @@ const User = db.define('user',
             }
         },
         image: DataTypes.STRING(60),
+        description: DataTypes.STRING,
         email: {
             type: DataTypes.STRING(40),
             allowNull: false,

@@ -5,7 +5,7 @@
 
     <div class="contenedor-botones">
         <a href="/group/new" class="btn btn-amarillo">Crear grupo</a>
-        <a href="/group/meeti" class="btn btn-azul">Nuevo Meeti</a>
+        <a href="/meeti/new" class="btn btn-azul">Nuevo Meeti</a>
         <a href="/user/edit" class="btn btn-rosa">Editar perfil</a>
         <a href="/user/image" class="btn btn-amarillo">Imagen de perfil</a>
     </div>
@@ -13,18 +13,26 @@
     <div class="seccion-admin">
         <h2>Tus eventos</h2>
         <ul>
-            <li>
-                <div class="informacion-admin">
-                    <p class="fecha">Domingo 26 de Septiembre</p>
-                    <h3>E-Commerce en Costa Rica</h3>
-                    <small>25 asistentes</small>
-                </div>
-                <div class="acciones contenedor-botones">
-                    <a href="#" class="btn btn-verde">Editar</a>
-                    <a href="#" class="btn btn-azul">Asistentes</a>
-                    <a href="#" class="btn btn-rojo">Eliminar</a>
-                </div>
-            </li>
+            <% if (meetis.length) { %>
+                <% meetis.forEach(uniqMeeti => { %>
+                    <li>
+                        <div class="informacion-admin">
+                            <% moment.locale('es') %> 
+                            <% const date = uniqMeeti.date + ' ' + uniqMeeti.time %> 
+                            <p class="fecha"> <%= moment(date).format('LLL') %>  </p>
+                            <h3><%= uniqMeeti.title %></h3>
+                            <small"><%= uniqMeeti.members.length %> Participantes</small>
+                        </div>
+                        <div class="acciones contenedor-botones">
+                            <a href="/meeti/edit/<%= uniqMeeti.id %>" class="btn btn-verde">Editar</a>
+                            <a href="/meeti/edit-image/<%= uniqMeeti.id %>" class="btn btn-azul2">Imagen</a>
+                            <a href="/meeti/delete/<%= uniqMeeti.id %>" class="btn btn-rojo">Eliminar</a>
+                        </div>
+                    </li>
+                <% }) %>
+            <% } else { %>
+                 <p>No tienes meeti's todavía, comienza creado...</p>
+            <% } %>
         </ul>
     </div>
 
@@ -47,6 +55,33 @@
         <% } else {%>
             <p>No tienes un grupo creado</p>
         <% } %> 
+        </ul>
+    </div>
+
+
+    <div class="seccion-admin">
+        <h2>Meeti's anteriores</h2>
+        <ul>
+            <% if (prevMeetis.length) { %>
+                <% prevMeetis.forEach(uniqMeeti => { %>
+                    <li>
+                        <div class="informacion-admin">
+                            <% moment.locale('es') %> 
+                            <% const date = uniqMeeti.date + ' ' + uniqMeeti.time %> 
+                            <p class="fecha"> <%= moment(date).format('LLL') %>  </p>
+                            <h3><%= uniqMeeti.title %></h3>
+                            <small"><%= uniqMeeti.members.length %> Participantes</small>
+                        </div>
+                        <div class="acciones contenedor-botones">
+                            <a href="/meeti/edit/<%= uniqMeeti.id %>" class="btn btn-verde">Editar</a>
+                            <a href="/meeti/edit-image/<%= uniqMeeti.id %>" class="btn btn-azul2">Imagen</a>
+                            <a href="/meeti/delete/<%= uniqMeeti.id %>" class="btn btn-rojo">Eliminar</a>
+                        </div>
+                    </li>
+                <% }) %>
+            <% } else { %>
+                 <p>No hay meeti's anteriores...</p>
+            <% } %>
         </ul>
     </div>
 </main>

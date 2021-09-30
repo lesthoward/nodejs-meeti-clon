@@ -4,7 +4,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "sync": "nodemon index.js -e ejs,js"
+    "build": "webpack mode=production",
+    "sync": "npm-run-all --parallel server bundle",
+    "server": "nodemon index.js -e ejs,js",
+    "bundle": "webpack --watch --mode=development"
   },
   "author": "Lester Howard",
   "license": "ISC",
@@ -19,6 +22,8 @@
     "express-validator": "^6.12.1",
     "http-errors": "^1.8.0",
     "i18n": "^0.13.3",
+    "leaflet-geosearch": "^3.5.0",
+    "moment": "^2.29.1",
     "multer": "^1.4.3",
     "nanoid": "^3.1.28",
     "passport": "^0.5.0",
@@ -29,15 +34,21 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.5",
     "sequelize-transforms": "^2.0.0",
+    "slug": "^5.1.0",
     "url": "^0.11.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.6",
+    "babel-loader": "^8.2.2",
     "connect-livereload": "^0.6.1",
     "ejs": "^3.1.6",
     "livereload": "^0.9.3",
     "nodemailer": "^6.6.5",
     "nodemon": "^2.0.13",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "webpack": "^5.55.0",
+    "webpack-cli": "^4.8.0"
   }
 }

@@ -16,14 +16,10 @@ const { request, response } = require('express')
 
 // Database connection
 try {
-    require('./src/models/User')
-    require('./src/models/Category')
-    require('./src/models/Group')
     dbConnection.sync({alter: true})
     .then(() => {
         console.log('Postgres connection has been established successfully');
     })
-    // Models
 } catch (error) {
     console.log('Error to connect database');
 }
@@ -91,8 +87,6 @@ app.use((req, res, next) => {
     }
     req.logIn(user, function(err) {
         if(err) return res.send('Error Auth')
-
-        console.log('Ok, logged');
     })
 
     res.locals.messages = req.flash()
@@ -105,6 +99,8 @@ app.use('/', require('./src/routes/index.routes'))
 app.use('/', require('./src/routes/auth.routes'))
 app.use('/', require('./src/routes/management.routes'))
 app.use('/', require('./src/routes/group.routes'))
+app.use('/', require('./src/routes/meeti.routes'))
+app.use('/', require('./src/routes/user.routes'))
 
 
 
