@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "webpack mode=production",
+    "build": "webpack --mode=production",
     "sync": "npm-run-all --parallel server bundle",
     "server": "nodemon index.js -e ejs,js",
     "bundle": "webpack --watch --mode=development"
