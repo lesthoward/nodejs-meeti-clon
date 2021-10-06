@@ -40,14 +40,14 @@
     "url": "^0.11.0",
     "uuid": "^8.3.2",
     "livereload": "^0.9.3",
-    "connect-livereload": "^0.6.1"
+    "connect-livereload": "^0.6.1",
+    "nodemailer": "^6.6.5"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",
     "babel-loader": "^8.2.2",
     "ejs": "^3.1.6",
-    "nodemailer": "^6.6.5",
     "nodemon": "^2.0.13",
     "npm-run-all": "^4.1.5",
     "webpack": "^5.55.0",
