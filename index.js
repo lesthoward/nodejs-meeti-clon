@@ -25,16 +25,16 @@ try {
 }
 
 // Live reload
-if(process.env.NODE_ENV !== 'production') {
-    const liveReloadServer = livereload.createServer()
-    liveReloadServer.watch(path.join(__dirname, './public/'))
-    liveReloadServer.server.once('connection', () => {
-        setTimeout(function() {
-            liveReloadServer.refresh('/')
-        }, 100);
-    })
-    app.use(connectReload())
-}
+// if(process.env.NODE_ENV !== 'production') {
+//     const liveReloadServer = livereload.createServer()
+//     liveReloadServer.watch(path.join(__dirname, './public/'))
+//     liveReloadServer.server.once('connection', () => {
+//         setTimeout(function() {
+//             liveReloadServer.refresh('/')
+//         }, 100);
+//     })
+//     app.use(connectReload())
+// }
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')))
