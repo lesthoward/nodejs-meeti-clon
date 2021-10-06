@@ -78,17 +78,16 @@ app.use((req, res, next) => {
 
 
 // Personal middlewares
-app.use((req, res, next) => {
-    const user = {
-        id: 29,
-        email: 'lesthoward@gmail.com',
-        password: '$2b$10$.iK5ZdqArydFeOhu157B4eDlZQ.tCy742RRfIrjH16j6pWn6t.P9C',
+app.use(async (req, res, next) => {
+    // const User = require('./src/models/User')
+    // const user = await User.findOne({where: {name: 'lester'}})
+    // req.logIn(user, function(err) {
+    //     if(err) return res.send('Error Auth')
+    // })
 
-    }
-    req.logIn(user, function(err) {
-        if(err) return res.send('Error Auth')
-    })
 
+
+    res.locals.user = req.user || null
     res.locals.messages = req.flash()
     res.locals.year = new Date()
     next() 

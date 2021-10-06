@@ -44,5 +44,9 @@ router.post('/group/delete/:groupID',
     groupController.deleteGroup
 )
 
+// FRONT-END
+router.get('/group/:groupID', 
+    groupController.showGroup
+)
 
 module.exports = router

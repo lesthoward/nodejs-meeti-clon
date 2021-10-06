@@ -1,9 +1,15 @@
+const { Sequelize } = require('sequelize');
+
 const { request, response } = require('express');
 const { check, validationResult } = require('express-validator');
 const { v4: uuid } = require('uuid');
+const createError = require('http-errors');
 const Meeti = require('../models/Meeti');
 const Group = require('../models/Group');
-const createError = require('http-errors');
+const User = require('../models/User');
+const moment = require('moment');
+const Category = require('../models/Category');
+const Comment = require('../models/Comment');
 
 const showForm = async (req = request, res = response, next) => {
 	const groups = await Group.findAll({ where: { userId: req.user.id } });
@@ -108,25 +114,167 @@ const editMeeti = async (req = request, res = response) => {
 };
 
 const showFormDelete = async (req = request, res = response) => {
-	const meeti = await Meeti.findOne({ where:{id: req.params.id}})
+	const meeti = await Meeti.findOne({ where: { id: req.params.id } });
 
-	if(!meeti) {
-		return createError(404, 'La página que estás buscando no pudo ser encontrada')
+	if (!meeti) {
+		return createError(
+			404,
+			'La página que estás buscando no pudo ser encontrada'
+		);
 	}
 	res.render('meeti-form-delete', {
 		title: 'Eliminar Meeti',
-		meeti
+		meeti,
 	});
 };
 
 const deleteMeeti = async (req = request, res = response) => {
 	try {
-		await Meeti.destroy({ where: { id: req.params.id, userId: req.user.id } });
+		await Meeti.destroy({
+			where: { id: req.params.id, userId: req.user.id },
+		});
 		req.flash('exito', 'Eliminado correctamente');
 		return res.redirect('/management');
 	} catch (error) {
 		createError(404, 'La página que estás buscando no pudo ser encontrada');
 	}
+};
+
+// Front-End
+
+const showSingleMeeti = async (req = request, res = response) => {
+	const meeti = await Meeti.findOne({
+		where: {
+			slug: req.params.slug,
+		},
+		include: [
+			{
+				model: User,
+				attributes: ['id', 'name', 'image'],
+			},
+			{
+				model: Group,
+				attributes: ['id', 'image', 'name'],
+			},
+		],
+	});
+	if (!meeti) {
+		return createError(404, 'La página que estás buscando no existe');
+	}
+
+	const commentArr = await Comment.findAll({
+		where: { meetiId: meeti.id },
+		include: [
+			{
+				model: User
+			},
+			{
+				model: Meeti
+			}
+		]
+	});
+
+	res.render('meeti-singlepage', {
+		title: meeti.title,
+		meeti,
+		moment,
+		commentArr,
+	});
+};
+
+const newAssistant = async (req = request, res = response) => {
+	const { assistantState } = req.body;
+	if (assistantState === 'confirm') {
+		await Meeti.update(
+			{
+				members: Sequelize.fn(
+					'array_append',
+					Sequelize.col('members'),
+					req.user.id
+				),
+			},
+			{ where: { slug: req.params.slug } }
+		);
+		return res.send('Has confirmado tu asistencia');
+	}
+
+	await Meeti.update(
+		{
+			members: Sequelize.fn(
+				'array_remove',
+				Sequelize.col('members'),
+				req.user.id
+			),
+		},
+		{ where: { slug: req.params.slug } }
+	);
+	res.send('Has cancelado tu asistencia');
+};
+
+const showAssistant = async (req = request, res = response) => {
+	const uniqMeeti = await Meeti.findOne({
+		where: {
+			slug: req.params.slug,
+		},
+		attributes: ['members'],
+	});
+
+	const assistantsArr = await User.findAll({
+		where: {
+			id: uniqMeeti.members,
+		},
+		attributes: ['name', 'image'],
+	});
+
+	res.render('meeti-assistants', {
+		title: 'Lista de asistentes',
+		assistantsArr,
+	});
+};
+
+const showByCategory = async (req = request, res = response) => {
+	const category = await Category.findOne({
+		where: { slug: req.params.category },
+		attributes: ['id', 'name'],
+	});
+	const meetiArr = await Meeti.findAll({
+		include: [
+			{
+				model: Group,
+				where: { categoryId: category.id },
+			},
+			{
+				model: User,
+			},
+		],
+	});
+
+	res.render('meeti-by-category', {
+		title: `Categoría: ${category.name}`,
+		category,
+		meetiArr,
+		moment,
+	});
+};
+
+const addComment = async (req = request, res = response) => {
+	await Comment.create({
+		message: req.body.comment,
+		userId: req.user.id,
+		meetiId: req.params.id,
+	});
+
+	res.redirect('back');
+};
+
+const deleteComment = async (req = request, res = response) => {
+	const comment = await Comment.findByPk(req.body.commentID)
+	const meeti = await Meeti.findByPk(comment.meetiId)
+
+	if(comment.userId === req.user.id || meeti.userId === req.user.id) {
+		await comment.destroy()
+	}
+	res.send('OK');
 };
 
 module.exports = {
@@ -137,4 +285,10 @@ module.exports = {
 	editMeeti,
 	showFormDelete,
 	deleteMeeti,
+	showSingleMeeti,
+	newAssistant,
+	showAssistant,
+	showByCategory,
+	addComment,
+	deleteComment,
 };

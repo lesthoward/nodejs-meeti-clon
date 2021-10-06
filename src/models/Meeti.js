@@ -21,6 +21,7 @@ const Meeti = db.define('meeti',
             type: DataTypes.STRING,
             allowNull: false,
             trim: true,
+            lowercase: true,
             unique: {
                 args: true,
                 msg: 'Ya existe un meeti con ese nombre'

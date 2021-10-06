@@ -18,19 +18,23 @@
     <!-- Scripts -->
     <script src="/js/trix-core.js" defer></script>
     <script src="/dist/bundle.js" defer></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
+    <!-- <script src="/js/etc/meeti-singlepage.js" defer></script> -->
     <!-- Information -->
     <title><%- title %></title>
 </head>
 <body>
     <header class="site-header contenedor">
-        <a href="/management">
+        <a href="/">
             <img src="/images/variety/logo.png">
         </a>
 
         <nav class="nav">
-            <a href="/group/new">Crear grupo</a>
-            <a href="/login">Iniciar sesión</a>
-            <a href="/register">Registrarse</a>
+            <% if (locals.user) { %>
+                <%- include('../partials/navbar-auth') %> 
+            <% } else {%>
+                <%- include('../partials/navbar-no-auth') %> 
+            <% } %> 
        </nav>
        <!-- nav -->
     </header>
@@ -53,11 +57,13 @@
     <%- body %> 
 
     <footer class="site-footer contenedor">
-        <nav class="nav">
-            <a href="#">Crear grupo</a>
-            <a href="#">Iniciar sesión</a>
-            <a href="/register">Registrarse</a>
-       </nav>
+        <% if (!locals.user) { %>
+            <nav class="nav">
+                <a href="/group/new">Crear grupo</a>
+                <a href="/login">Iniciar sesión</a>
+                <a href="/register">Registrarse</a>
+           </nav>
+        <% } %>
 
        <p class="copyright">© Todos los derechos reservados <%- year %> </p>
     </footer>

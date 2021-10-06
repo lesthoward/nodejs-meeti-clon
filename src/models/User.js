@@ -22,7 +22,7 @@ const User = db.define('user',
             }
         },
         image: DataTypes.STRING(60),
-        description: DataTypes.STRING,
+        description: DataTypes.TEXT,
         email: {
             type: DataTypes.STRING(40),
             allowNull: false,
@@ -58,6 +58,13 @@ const User = db.define('user',
     },
     {
         hooks: {
+            beforeUpdate(user) {
+                console.log(user);
+                if(user.password) {
+                    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10))
+                }
+
+            },
             beforeCreate(user) {
                 user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10))
             }

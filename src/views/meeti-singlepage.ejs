@@ -1,0 +1,120 @@
+<div class="encabezado-evento">
+    <div class="contenedor">
+        <div class="resumen-evento">
+            <h1><%= meeti.title %> </h1>
+
+            <div class="info-autor">
+                <div class="imagen">
+                    <% if (meeti.user.image) { %>
+                        <img src="/uploads/profile/<%= meeti.user.image %>">
+                    <% } %>
+                </div>
+                <!-- imagen -->
+                <div class="informacion">
+                    <p>Organizado por:</p>
+                    <p class="autor">
+                        <a href="/user/profile/<%= meeti.user.id %>"><%= meeti.user.name %> Creador de: </a>
+                        <a href="/group/<%= meeti.group.id %>"><%= meeti.group.name %> </a>
+                    </p>
+                </div>
+                <!-- informacion -->
+            </div>
+            <!-- info-autor -->
+        </div>
+        <!-- resumen-evento -->
+        
+        <div class="pregunta-asistencia">
+            <% if (locals.user) { %>
+                <form action="/meeti/assistants/<%= meeti.slug %> " method="POST" id="addAssistant">
+                    <% const assistantState = meeti.members.includes(locals.user.id) %> 
+                    <p>¿Asistirás?</p>
+                    <% if (assistantState) { %>
+                        <input type="hidden" id="assistantState" value="cancel">
+                        <input class="btn btn-rojo" value="No, cancelar asistencia" id="btnAssistant"></input>
+                        <% } else { %>
+                        <input type="hidden" id="assistantState" value="confirm">
+                        <input class="btn btn-azul" value="Si, confirmar asistencia" id="btnAssistant"></input>
+                    <% } %> 
+                    <div id="mensaje"></div>
+                </form>
+            <% } else { %>
+                <p>Inicia sesión para confirmar tu asistencia</p>
+            <% } %> 
+        </div>
+        <!-- pregunta-asistencia -->
+    </div>
+</div>
+
+<main class="contenido-evento">
+    <div class="contenedor">
+        <div class="informacion-evento">
+            <div class="descripcion">
+                <img src="/uploads/group/<%= meeti.group.image %>" alt="">
+
+                <!-- Imagen del meeti -->
+                <%- meeti.description %> 
+            </div>
+            <!-- descripcion -->
+
+            <div class="asistentes">
+                <div class="titulo">
+                    <h3><%= meeti.members.length %> Asistentes</h3>
+                    <a href="/meeti/assistants/<%= meeti.slug %>">Ver todos</a>
+                </div>
+            </div>
+            <!-- asistentes -->
+
+            <div class="comentarios">
+                <h2 class="h2">Comentarios</h2>
+                <% if (commentArr.length) { %>
+                    <% commentArr.forEach(comment => { %>
+                        <div class="comentario">
+                            <div class="imagen"></div>
+                            <div class="texto">
+                                <p><%= comment.message %> </p>
+                                <p>Escrito por: 
+                                    <a href="/user/profile/<%= comment.user.id %> "><%= comment.user.name %> </a>
+                                </p>
+                                <% if (comment.userId === locals.user.id || meeti.user.id === locals.user.id) { %>
+                                    <input type="submit" value="Eliminar" class="btn btn-azul" data-commentid="<%= comment.id %>">
+                                    <!-- <form action="/meeti/delete-comment" method="POST">
+                                        <input type="hidden" name="commentID" id="commentID" value="">
+                                    </form> -->
+                                <% } %> 
+                            </div>
+                            <!-- texto -->
+                        </div>
+                        <!-- comentario -->
+                    <% }) %>
+                <% } else {%>
+                    <p>Sé el primero en comentar</p>
+                <% } %> 
+
+                <form action="/meeti/comment/<%= meeti.id %>" method="POST" class="default-form">
+                    <legend>Agrega un comentario</legend>
+                    <div class="campo">
+                        <label for="">Comentario</label>
+                        <textarea name="comment"></textarea>
+                    </div>
+                    <div class="campo enviar">
+                        <input type="submit" value="Enviar" class="btn btn-rosa">
+                    </div>
+                </form>
+                <!-- default-form -->
+            </div>
+            <!-- comentarios -->
+        </div>
+        <!-- informacion-evento -->
+
+        <aside class="informacion">
+            <% moment.locale('es') %> 
+            <% const date = meeti.date + ' ' + meeti.time %> 
+            <div class="fecha">
+                <p><%= moment(date).format('LLLL') %> Horas</p>
+            </div>
+            <div class="ubicacion">
+                <p><%= meeti.address %></p>
+            </div>
+        </aside>
+    </div>
+</main>

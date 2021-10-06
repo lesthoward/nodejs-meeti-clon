@@ -166,7 +166,15 @@ p {
     background-color: #e1e1e1;
     height: 50px;
     width: 50px;
+    overflow: hidden;
 }
+
+.imagen > * {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .info-autor .autor {
     font-weight: 700;
     margin-top: .5rem;
@@ -201,7 +209,7 @@ nav.nav a:first-child {
 /** hero **/
 .hero {
     height: 38rem;
-    background-image: url(../img/hero.jpg);
+    background-image: url(../images/variety/hero.jpg);
     background-size: cover;
     background-position: center center;
     display: flex;
@@ -568,6 +576,19 @@ trix-toolbar .trix-button--icon-strike {
     font-weight: 700;
     font-size: 1.4rem;
 }
+
+.listado-asistentes {
+    display: flex;
+}
+
+.listado-asistentes li{
+    padding: 2rem 5rem;
+    border: 1px solid #C7C7C7;
+    text-transform: uppercase;
+    margin: 1rem;
+    border-radius: .3rem;
+}
+
 .lista-asistentes {
     display: flex;
     justify-content: space-between;
@@ -618,11 +639,11 @@ trix-toolbar .trix-button--icon-strike {
 }
 
 aside .fecha {
-    background-image: url(../img/icono-hora.svg);
+    background-image: url(../images/variety/icono-hora.svg);
     margin-bottom: 2rem;
 }
 aside .ubicacion {
-    background-image: url(../img/icono-ubicacion.svg);
+    background-image: url(../images/variety/icono-ubicacion.svg);
 }
 aside img {
     display: block;

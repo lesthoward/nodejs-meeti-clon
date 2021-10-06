@@ -36,5 +36,18 @@ router.post('/meeti/delete/:id',
 )
 
 
+// Front-End
+router.get('/meeti/:slug', 
+    meetiController.showSingleMeeti
+)
+
+router.post('/meeti/comment/:id', meetiController.addComment)
+router.post('/meeti/delete-comment', meetiController.deleteComment)
+
+router.get('/meeti/assistants/:slug', meetiController.showAssistant)
+
+router.post('/meeti/assistants/:slug', meetiController.newAssistant)
+
+router.get('/meeti/by-category/:category', meetiController.showByCategory)
 
 module.exports = router

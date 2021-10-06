@@ -1,3 +1,8 @@
+// Modules
+import "@babel/polyfill";
+import './etc/meeti-singlepage'
+import './etc/meeti.comment'
+
 import { OpenStreetMapProvider } from 'leaflet-geosearch'
 const lat = 10.016591
 const long = -84.214341

@@ -1,0 +1,37 @@
+<main class="contenedor asistentes">
+    <h1><%= title %> </h1>
+    <div class="informacion-usuario">
+        <div class="imagen">
+            <% if (user.image) { %>
+         
+            <% } %>        
+        </div>
+        <div class="texto">
+            <% if (user.description.length) { %>
+                <%- user.description %>
+            <% } else {%>
+                <p>Este usuario no ha incluido una descripción</p>
+            <% } %> 
+        </div>
+    </div>
+
+    <div class="grupos-usuario">
+        <% if (groupArr.length) { %>
+            <h2>Grupos de: <%= user.name %></h2>
+            <ul class="lista-grupos">
+                <% groupArr.forEach(group => { %>
+                    <li>
+                        <div class="imagen">
+                        </div>
+                    </li>
+
+                    <div class="texto">
+                        <a href="/group/<%= group.id %>">
+                            <h3><%= group.name %></h3>
+                        </a>
+                    </div>
+                <% }) %>
+            </ul>
+        <% } %>
+    </div>
+</main>

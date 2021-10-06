@@ -7,7 +7,12 @@ const Category = db.define('category', {
         primaryKey: true,
         autoIncrement: true
     },
-    name: DataTypes.TEXT
-})
+    name: DataTypes.TEXT,
+    slug: DataTypes.STRING(80)
+    },
+    {
+        timestamps: false
+    }
+)
 
 module.exports = Category

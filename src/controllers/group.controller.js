@@ -1,24 +1,25 @@
 const { request, response } = require('express');
 const Category = require('../models/Category');
 const Group = require('../models/Group');
+const Meeti = require('../models/Meeti');
 const { check, validationResult } = require('express-validator');
 const path = require('path');
 const { nanoid } = require('nanoid');
-const fs = require('fs')
-const { v4: uuid } = require('uuid')
-const createError = require('http-errors')
-const { Op } = require('sequelize')
-
+const fs = require('fs');
+const { v4: uuid } = require('uuid');
+const createError = require('http-errors');
+const { Op } = require('sequelize');
+const moment = require('moment');
 
 const multer = require('multer');
 const multerConfig = {
 	limits: { fileSize: 250_000 },
-    fileFilter: (req, file, cb) => {
+	fileFilter: (req, file, cb) => {
 		const extension = file.mimetype.split('/')[1];
 		if (extension.match(/(jpg|png|jpeg)$/)) {
 			cb(null, true);
 		} else {
-            cb(new Error('NOT_VALID_FORMAT'))
+			cb(new Error('NOT_VALID_FORMAT'));
 		}
 	},
 	storage: multer.diskStorage({
@@ -48,32 +49,36 @@ const createGroup = async (req = request, res = response) => {
 	const rules = [
 		check('category', 'Defina una categoría de grupo').not().equals('none'),
 		check('name').escape(),
-		check('url').escape(),
 	];
 	await Promise.all(rules.map((validation) => validation.run(req)));
 	const expressErrs = validationResult(req);
 
-    // Image validation
-    if(req.file) {
-        group.image = req.file.filename
-    }
+	// Image validation
+	if (req.file) {
+		group.image = req.file.filename;
+	}
 
 	try {
 		await Group.create({
 			...group,
-            id: uuid(),
+			id: uuid(),
 			userId: req.user.id,
 			categoryId: req.body.category,
 		});
 
 		req.flash('exito', `Se ha creado el grupo de ${req.body.name}`);
-        res.redirect('/management');
+		res.redirect('/management');
 	} catch (error) {
-        // console.log(error)
-        // Remove image on error
-        if(req.file) {
-            fs.unlinkSync(path.join(__dirname, `../../public/uploads/group/${req.file.filename}`))
-        }
+		// console.log(error)
+		// Remove image on error
+		if (req.file) {
+			fs.unlinkSync(
+				path.join(
+					__dirname,
+					`../../public/uploads/group/${req.file.filename}`
+				)
+			);
+		}
 
 		// Express validator, automatically rejects the trycatch
 		const expErrs = expressErrs.errors.map((err) => err.msg);
@@ -81,7 +86,7 @@ const createGroup = async (req = request, res = response) => {
 
 		// Sequelize errors
 		if (error.errors) {
-            const errCatch = error.errors.map((err) => err.message);
+			const errCatch = error.errors.map((err) => err.message);
 			// Join de catch and express validator messages if errors.length exists
 			errArr = [...errCatch, ...expErrs];
 		}
@@ -108,10 +113,13 @@ const uploadImage = (req = request, res = response, next) => {
 			);
 			return res.redirect('back');
 		} else if (error) {
-			if(error.message === 'NOT_VALID_FORMAT') {
-                req.flash('errors', 'La imagen no cumple con los formatos permitidos (jpg,png,jpeg)')
-                return res.redirect('back')
-            }
+			if (error.message === 'NOT_VALID_FORMAT') {
+				req.flash(
+					'errors',
+					'La imagen no cumple con los formatos permitidos (jpg,png,jpeg)'
+				);
+				return res.redirect('back');
+			}
 			req.flash(
 				'errors',
 				'Ha ocurrido un error al subir el archivo: Multer Error (ELSE)'
@@ -119,90 +127,122 @@ const uploadImage = (req = request, res = response, next) => {
 			return res.redirect('/');
 		}
 		// If everything goes well then continue
-		next()
+		next();
 	});
 };
 
 const showEdit = async (req = request, res = response) => {
 	const [group, categories] = await Promise.all([
 		Group.findByPk(req.params.groupID),
-		Category.findAll()
-	])
+		Category.findAll(),
+	]);
 
 	res.render('form-edit-group', {
 		title: group.name,
 		group,
-		categories
-	})
-}
+		categories,
+	});
+};
 
 const editGroup = async (req = request, res = response) => {
 	const group = await Group.findOne({
 		where: {
 			id: req.params.groupID,
-			userId: req.user.id
-		}
-	})
-	if(!group) return next(createError(402, 'No tienes permisos para editar este grupo'))
+			userId: req.user.id,
+		},
+	});
+	if (!group)
+		return next(
+			createError(402, 'No tienes permisos para editar este grupo')
+		);
 
-	// Update all object, not matter wether or not is changes 
-	await Group.update(
-		req.body,
-		{ where: {
-			id: req.params.groupID
-			}
-		}
-	)
+	// Update all object, not matter wether or not is changes
+	await Group.update(req.body, {
+		where: {
+			id: req.params.groupID,
+		},
+	});
 	// group.save()
-	req.flash('exito', 'Se han guardado los cambios')
-	res.redirect('/management')
-}
+	req.flash('exito', 'Se han guardado los cambios');
+	res.redirect('/management');
+};
 
 const showEditImage = async (req = request, res = response) => {
-	const group = await Group.findByPk(req.params.groupID)
+	const group = await Group.findByPk(req.params.groupID);
 	res.render('form-edit-image', {
 		title: 'Editar imagen de grupo',
-		group
-	})
-}
+		group,
+	});
+};
 
 const editImage = async (req = request, res = response) => {
-	const group = await Group.findByPk(req.params.groupID)
-	if(!group) return next(createError(402, 'Operación no autorizada (EDIT IMAGE)'))
+	const group = await Group.findByPk(req.params.groupID);
+	if (!group)
+		return next(createError(402, 'Operación no autorizada (EDIT IMAGE)'));
 
-	if(!req.file) {
-		req.flash('errors','Añade una imagen')
-		return res.redirect('back')
+	if (!req.file) {
+		req.flash('errors', 'Añade una imagen');
+		return res.redirect('back');
 	} else {
-		if(group.image) {
-			fs.unlinkSync(path.join(__dirname,`../../public/uploads/group/${group.image}`))
+		if (group.image) {
+			fs.unlinkSync(
+				path.join(
+					__dirname,
+					`../../public/uploads/group/${group.image}`
+				)
+			);
 		}
-		group.image = req.file.filename
-		group.save()
-		req.flash('exito', 'Imagen almacenada correctamente')
-		res.redirect('/management')
+		group.image = req.file.filename;
+		group.save();
+		req.flash('exito', 'Imagen almacenada correctamente');
+		res.redirect('/management');
 	}
-}
+};
 
-const showFormDelete = async (req=request, res=response, next) => {
-	const group = await Group.findOne({where: { id: req.params.groupID, userId: req.user.id }})
-	if(!group) return createError('401', 'Operación no valida (PERMISSIONS  || NOT FOUND)')
-    
-	
+const showFormDelete = async (req = request, res = response) => {
+	const group = await Group.findOne({
+		where: { id: req.params.groupID, userId: req.user.id },
+	});
+	if (!group)
+		return createError(
+			'401',
+			'Operación no valida (PERMISSIONS  || NOT FOUND)'
+		);
+
 	res.render('form-delete-group', {
 		title: 'Eliminar grupo',
-		group
-	})
-}
+		group,
+	});
+};
 
-const deleteGroup = async (req=request, res=response, next) => {
-	const group = await Group.findOne({where: { id: req.params.groupID, userId: req.user.id }})
-	if(!group) return createError('401', 'Operación no valida (PERMISSIONS  || NOT FOUND)')
-	// await Group.destroy({ where: {  }})
-	await group.destroy()
-	req.flash('exito', 'Grupo eliminado correctamente')
-	res.redirect('/management')
-}
+const deleteGroup = async (req = request, res = response) => {
+	const group = await Group.findOne({
+		where: { id: req.params.groupID, userId: req.user.id },
+	});
+	if (!group)
+		return createError(
+			'401',
+			'Operación no valida (PERMISSIONS  || NOT FOUND)'
+		);
+	await group.destroy();
+	req.flash('exito', 'Grupo eliminado correctamente');
+	res.redirect('/management');
+};
+
+const showGroup = async (req = request, res = response) => {
+	const group = await Group.findByPk(req.params.groupID);
+	const meetiArr = await Meeti.findAll({
+		where: { groupId: req.params.groupID }
+	});
+
+	res.render('group-profile', {
+		title: `Información del grupo: ${group.name}`,
+		group,
+		meetiArr,
+		moment,
+	});
+};
+
 
 module.exports = {
 	showFormGroup,
@@ -213,5 +253,6 @@ module.exports = {
 	showEditImage,
 	editImage,
 	showFormDelete,
-	deleteGroup
-}
+	deleteGroup,
+	showGroup,
+};

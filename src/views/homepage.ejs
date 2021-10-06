@@ -1,1 +1,90 @@
-<h1><%- title %></h1>
+<div class="hero">
+    <h1>Encuentra o crea un grupo para compartir lo que más te gusta</h1>
+    <% if (!locals.user) { %>
+        <a href="/register" class="btn btn-amarillo">Obtener Cuenta</a>
+    <% } else { %>
+        <a href="/management" class="btn btn-amarillo">Mi cuenta</a>
+    <% } %> 
+</div>
+
+<!-- <div class="buscador-inicio">
+    <div class="contenedor">
+        <h2>Busca un grupo en tu ciudad</h2>
+        <form action="/group/search">
+            <select name="categoria">
+                    <option value="" disabled selected>-- Selecciona Categoría --</option>
+                    <option value="programacion">Programación</option>
+                    <option value="diseno">Diseño</option>
+                    <option value="libros">Libros</option>
+            </select>
+            <input type="text" name="nombre" placeholder="Nombre Meeti">
+            <input type="submit" value="Buscar" class="btn btn-rosa">
+        </form>
+    </div>
+</div> -->
+
+<%# JSON.stringify(lastMeetis, null, 2) %> 
+<div class="contenedor">
+    <h2>Próximos Meeti's</h2>
+    <div class="grid columnas-md-3 ">
+        <% if (lastMeetis) { %>
+            <% lastMeetis.forEach(uniqMeeti => { %>
+                <div class="card">
+                    <% if (uniqMeeti.group.image) { %>
+                        <img src="/uploads/group/<%= uniqMeeti.group.image %>">
+                    <% } %>
+                    <div class="card-texto">
+                        <p class="fecha"><%= uniqMeeti.date %></p>
+                        <a href="/meeti/<%- uniqMeeti.slug %>">
+                            <h3><%= uniqMeeti.title %></h3>
+                        </a>
+                        <div class="info-autor">
+                            <div class="imagen">
+                            </div>
+                            <div class="informacion">
+                                <p>Organizado por:</p>
+                                <a href="/user/profile/<%= uniqMeeti.user.id %> " class="autor"><%= uniqMeeti.user.name %></a>
+                            </div>
+                            <!-- informacion -->
+                        </div>
+                        <!-- info-autor -->
+                    </div>
+                    <!-- card-texto -->
+                </div>
+                <!-- card -->
+            <% }) %>
+        <% } else { %>
+            <p>No hay meetis</p>
+        <% } %> 
+    </div>
+</div>
+
+<main class="bg-gris categorias">
+    <h2>Encuentra Grupos por Categoría</h2>
+
+    <div class="contenedor">
+        <ul class="listado-categorias  grid columnas-2 columnas-md-3">
+            <% categoryArr.forEach((category, index) => { %>
+                <li>
+                    <a href="/meeti/by-category/<%= category.slug %> ">
+                        <img src="/images/variety/categoria_<%= category.id %>.jpg">
+                        <p><%= category.name %></p>
+                    </a>
+                </li>
+            <% }) %>
+        </ul>
+    </div>
+</main>
+
+<div class="meeti-bg">
+    <div class="contenedor meeti grid columnas-md-2">
+        <section>
+            <h3>Crea un grupo</h3>
+            <p>Comparte lo que te gusta o tu pasión con los demás, crea tu propio grupo hoy mismo sin costos</p>
+        </section>
+        <section>
+            <h3>Únete a un grupo</h3>
+            <p>Conoce personas con tus mismos gustos y pasiones, únete a un grupo ya existente y recibe notificaciones sobre próximos eventos</p>
+        </section>
+    </div>
+</div>
