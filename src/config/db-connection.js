@@ -8,7 +8,13 @@ const dbConnection = new Sequelize(process.env.DB_NAME, process.env.DB_USER, pro
     host: process.env.DB_HOST,
     dialect: 'postgres',
     logging: false,
-    
+    ssl: true,
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    }
 })
 sequelizeTransform(dbConnection)
 module.exports = dbConnection
