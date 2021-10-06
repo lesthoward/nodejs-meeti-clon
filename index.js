@@ -12,17 +12,32 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const passport = require('./src/config/passport')
 const { request, response } = require('express')
+const { Client } = require('pg')
 
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  },
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: 5432,
+  ssl: true
+});
+
+client.connect();
 
 // Database connection
-try {
-    dbConnection.sync({alter: true})
-    .then(() => {
-        console.log('Postgres connection has been established successfully');
-    })
-} catch (error) {
-    console.log('Error to connect database');
-}
+// try {
+//     dbConnection.sync({alter: true})
+//     .then(() => {
+//         console.log('Postgres connection has been established successfully');
+//     })
+// } catch (error) {
+//     console.log('Error to connect database');
+// }
 
 // Live reload
 // if(process.env.NODE_ENV !== 'production') {
