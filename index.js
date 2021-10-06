@@ -24,7 +24,7 @@ const client = new Client({
   database: process.env.DB_NAME,
   host: process.env.DB_HOST,
   port: 5432,
-  ssl: true
+  ssl: { rejectUnauthorized: false }
 });
 
 client.connect();
