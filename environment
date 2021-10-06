@@ -1,5 +1,0 @@
-MAILGUN
-SMTP_USER=postmaster@sandbox4175f76ed1da4ef3be43464721b4a004.mailgun.org
-SMTP_PASS=47db032220bb0a09e5481f3c2711fb11-45f7aa85-f4748973
-SMTP_HOST=smtp.mailgun.org
-SMTP_PORT=587
