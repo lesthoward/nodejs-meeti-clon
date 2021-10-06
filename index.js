@@ -12,7 +12,7 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const passport = require('./src/config/passport')
 const { request, response } = require('express')
-const { Client } = require('pg')
+// const { Client } = require('pg')
 
 // const client = new Client({
 //   connectionString: process.env.DATABASE_URL,
