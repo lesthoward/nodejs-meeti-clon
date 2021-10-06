@@ -5,6 +5,7 @@ const path = require('path');
 const Group = require('../models/Group');
 
 const User = require('../models/User');
+const bcrypt = require('bcrypt')
 
 const showProfile = async (req = request, res = response) => {
 	const user = await User.findByPk(req.user.id);
@@ -67,7 +68,7 @@ const changePassword = async (req=request, res=response) => {
 
 	try {
 		await User.update(
-			{password},
+			{password:  bcrypt.hashSync(password, bcrypt.genSaltSync(10))},
 			{where: 
 				{ id:req.user.id },
 				individualHooks: true 

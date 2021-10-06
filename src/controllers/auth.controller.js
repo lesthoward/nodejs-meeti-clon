@@ -26,7 +26,13 @@ const addUser = async (req = request, res = response) => {
 		...req.body,
 		isValid: isValidURL,
 	};
-	const emailURL = `${req.headers.origin}/auth/isValid/${isValidURL}`;
+	let emailURL;
+	if(process.env.NODE_ENV === 'production') {
+
+		emailURL = `https://${req.headers.host}/auth/isValid/${isValidURL}`;
+	} else {
+		emailURL = `${req.headers.origin}/auth/isValid/${isValidURL}`;
+	}
 	await check(
 		'password-confirmation',
 		'Las contraseña tienen que ser iguales'

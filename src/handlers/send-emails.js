@@ -25,8 +25,6 @@ transporter.verify(function (error) {
 
 const sendMessage = async (subject, to, emailURL, filename) => {
     const htmlTemplate = await ejs.renderFile(path.join(__dirname, `../views/emails/${filename}.ejs`), {url: emailURL})
-
-    console.log(process.env.NODE_ENV === 'production' ? to : 'lesthoward@gmail.com');
     const message = await transporter.sendMail({
         from: 'Meeti <no-replay@lesthoward.com>',
         to: process.env.NODE_ENV === 'production' ? to : 'lesthoward@gmail.com' ,

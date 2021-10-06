@@ -103,7 +103,6 @@ app.use(async (req, res, next) => {
     // })
 
 
-
     res.locals.user = req.user || null
     res.locals.messages = req.flash()
     res.locals.year = new Date()
